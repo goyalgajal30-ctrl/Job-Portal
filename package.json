@@ -4,11 +4,14 @@
   "description": "Fullstack MERN Job Portal Application (Unified One-Step Deployment)",
   "main": "backend/server.js",
   "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix frontend/myapp && npm run build --prefix frontend/myapp",
+    "build": "npm install --prefix backend && npm install --prefix frontend/myapp --include=dev && npm run build --prefix frontend/myapp",
     "start": "node backend/server.js",
     "test": "npm test --prefix backend",
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend/myapp"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "keywords": ["mern", "job-portal", "react", "express", "nodejs"],
   "author": "",

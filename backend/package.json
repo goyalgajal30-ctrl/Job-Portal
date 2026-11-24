@@ -8,6 +8,7 @@
   "main": "server.js",
   "scripts": {
     "test": "node test_api.js",
+    "build": "npm install && npm install --prefix ../frontend/myapp --include=dev && npm run build --prefix ../frontend/myapp",
     "start": "node server.js",
     "dev": "nodemon server.js",
     "node": "node server.js",
