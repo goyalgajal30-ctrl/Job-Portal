@@ -38,13 +38,31 @@ app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
 
 
-app.get("/", (req, res) => {
-  res.send("Job Portal Backend is running")
-});
+const path = require("path");
+const fs = require("fs");
 
-app.use((req, res) => {
-  res.status(404).json({ success: false, message: "API route not found", });
-});
+const frontendDist = path.join(__dirname, "../frontend/myapp/dist");
+
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      return res.status(404).json({ success: false, message: "API route not found" });
+    }
+    res.sendFile(path.join(frontendDist, "index.html"), (err) => {
+      if (err) next(err);
+    });
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("Job Portal Backend is running");
+  });
+
+  app.use((req, res) => {
+    res.status(404).json({ success: false, message: "API route not found" });
+  });
+}
 
 // Global Error Handler
 app.use((err, req, res, next) => {
