@@ -316,6 +316,10 @@ function Login() {
                     Register as Company
                   </Link>
                 </div>
+
+                <p className="mt-4 text-[11px] text-gray-400">
+                  🔐 <span className="font-semibold text-gray-300">Admin Account:</span> Register securely via Postman/API with your secret setup key.
+                </p>
               </div>
 
               {/* Footer */}
