@@ -9,28 +9,42 @@ function CompanyDashboard() {
   const navigate = useNavigate();
 
   const [jobs, setJobs] = useState([]);
+  const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const fetchJobs = async () => {
+  const fetchData = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `${API_BASE}/job/my-jobs`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-      setJobs(response.data.jobs || []);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const [jobsRes, appsRes] = await Promise.allSettled([
+        axios.get(`${API_BASE}/job/my-jobs`, config),
+        axios.get(`${API_BASE}/job-apply/company-applicants`, config),
+      ]);
+
+      if (jobsRes.status === "fulfilled") {
+        setJobs(jobsRes.value.data.jobs || []);
+      }
+
+      if (appsRes.status === "fulfilled") {
+        setApplicants(appsRes.value.data.applicants || []);
+      }
     } catch (err) {
       setError(
-        err.response?.data?.message || "Unable to fetch your jobs"
+        err.response?.data?.message || "Unable to fetch company data"
       );
     } finally {
       setLoading(false);
@@ -38,7 +52,7 @@ function CompanyDashboard() {
   };
 
   useEffect(() => {
-    fetchJobs();
+    fetchData();
   }, []);
 
   const logout = () => {
@@ -88,7 +102,7 @@ function CompanyDashboard() {
               onClick={() => navigate("/company/manage-applicants")}
               className="transition hover:text-violet-600 dark:hover:text-violet-400"
             >
-              Candidates
+              Manage Applicants
             </button>
 
             <button
@@ -152,12 +166,21 @@ function CompanyDashboard() {
                 Manage your job vacancies and find the right people to grow your organization.
               </p>
 
-              <button
-                onClick={() => navigate("/company/create-job")}
-                className="mt-7 rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-violet-700 shadow-lg transition hover:-translate-y-1 hover:bg-purple-50"
-              >
-                + Post a Vacancy
-              </button>
+              <div className="mt-7 flex flex-wrap gap-4">
+                <button
+                  onClick={() => navigate("/company/create-job")}
+                  className="rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-violet-700 shadow-lg transition hover:-translate-y-1 hover:bg-purple-50"
+                >
+                  + Post a Vacancy
+                </button>
+
+                <button
+                  onClick={() => navigate("/company/manage-applicants")}
+                  className="rounded-xl border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20"
+                >
+                  Review Applicants ({applicants.length}) →
+                </button>
+              </div>
             </div>
 
             <div className="hidden h-52 w-64 items-center justify-center rounded-3xl border border-white/20 bg-white/10 backdrop-blur-md lg:flex">
@@ -177,11 +200,14 @@ function CompanyDashboard() {
         </section>
 
         {/* Statistics */}
-        <section className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <section className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
-          <div className="group rounded-2xl border border-violet-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-100/70 dark:border-white/10 dark:bg-[#1C1830] dark:hover:shadow-black/20">
+          <div
+            onClick={() => navigate("/company/manage-jobs")}
+            className="group cursor-pointer rounded-2xl border border-violet-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-100/70 dark:border-white/10 dark:bg-[#1C1830] dark:hover:shadow-black/20"
+          >
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-xl text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
-              ▣
+              💼
             </div>
 
             <p className="mt-5 text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -192,12 +218,15 @@ function CompanyDashboard() {
               {loading ? "..." : jobs.length}
             </h3>
 
-            <p className="mt-2 text-xs text-violet-600 dark:text-violet-400">
-              Total vacancies created
+            <p className="mt-2 text-xs font-semibold text-violet-600 dark:text-violet-400">
+              View all listings →
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-fuchsia-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-fuchsia-100/70 dark:border-white/10 dark:bg-[#1C1830] dark:hover:shadow-black/20">
+          <div
+            onClick={() => navigate("/company/manage-jobs")}
+            className="group cursor-pointer rounded-2xl border border-fuchsia-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-fuchsia-100/70 dark:border-white/10 dark:bg-[#1C1830] dark:hover:shadow-black/20"
+          >
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-fuchsia-100 text-xl text-fuchsia-600 dark:bg-fuchsia-500/15 dark:text-fuchsia-300">
               ✓
             </div>
@@ -210,8 +239,29 @@ function CompanyDashboard() {
               {loading ? "..." : activeJobs}
             </h3>
 
-            <p className="mt-2 text-xs text-fuchsia-600 dark:text-fuchsia-400">
-              Currently accepting applications
+            <p className="mt-2 text-xs font-semibold text-fuchsia-600 dark:text-fuchsia-400">
+              Accepting applications →
+            </p>
+          </div>
+
+          <div
+            onClick={() => navigate("/company/manage-applicants")}
+            className="group cursor-pointer rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-100/70 dark:border-white/10 dark:bg-[#1C1830] dark:hover:shadow-black/20"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-xl text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+              👥
+            </div>
+
+            <p className="mt-5 text-sm font-medium text-gray-500 dark:text-gray-400">
+              Total Applicants
+            </p>
+
+            <h3 className="mt-1 text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
+              {loading ? "..." : applicants.length}
+            </h3>
+
+            <p className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              Review candidates & resumes →
             </p>
           </div>
         </section>
@@ -319,12 +369,21 @@ function CompanyDashboard() {
                       </td>
 
                       <td className="px-6 py-5">
-                        <button
-                          onClick={() => navigate("/company/manage-jobs")}
-                          className="text-xs font-bold text-violet-600 transition hover:text-fuchsia-600 dark:text-violet-400"
-                        >
-                          Manage →
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => navigate("/company/manage-applicants")}
+                            className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:opacity-90"
+                          >
+                            View Applicants
+                          </button>
+
+                          <button
+                            onClick={() => navigate("/company/manage-jobs")}
+                            className="text-xs font-semibold text-gray-500 hover:text-violet-600 dark:text-gray-400"
+                          >
+                            Manage →
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

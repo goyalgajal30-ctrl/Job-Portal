@@ -123,6 +123,13 @@ function ManageJobs() {
             >
               ← Dashboard
             </button>
+
+            <button
+              onClick={() => navigate("/company/manage-applicants")}
+              className="rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+            >
+              Manage Applicants →
+            </button>
           </div>
         </div>
       </header>
@@ -333,6 +340,13 @@ function ManageJobs() {
 
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => navigate("/company/manage-applicants")}
+                            className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+                          >
+                            Applicants
+                          </button>
+
                           <button
                             onClick={() => navigate(`/company/edit-job/${job._id}`)}
                             className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20"
