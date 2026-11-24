@@ -143,6 +143,15 @@ function App() {
           />
 
           <Route
+            path="/company/manage-applicants/:jobId"
+            element={
+              <ProtectedRoute role="company">
+                <ManageApplicants />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/company/schedule-interview"
             element={
               <ProtectedRoute role="company">

@@ -374,10 +374,20 @@ function CompanyDashboard() {
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
                           <button
-                            onClick={() => navigate("/company/manage-applicants")}
-                            className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:opacity-90"
+                            onClick={() =>
+                              navigate(`/company/manage-applicants/${job._id}`)
+                            }
+                            className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:opacity-90"
                           >
-                            View Applicants
+                            <span>View Applications</span>
+                            <span className="rounded-full bg-white/25 px-1.5 py-0.5 text-[10px] font-bold">
+                              {job.totalApplicants ??
+                                applicants.filter(
+                                  (a) =>
+                                    (a.jobId?._id || a.jobId) === job._id
+                                ).length}
+                            </span>
+                            <span>→</span>
                           </button>
 
                           <button

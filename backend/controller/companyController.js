@@ -368,9 +368,22 @@ const getMyJobs = async (req, res) => {
       company: company._id,
     }).sort({ createdAt: -1 });
 
+    const jobsWithApplicants = await Promise.all(
+      jobs.map(async (job) => {
+        const totalApplicants = await JobApply.countDocuments({
+          jobId: job._id,
+        });
+
+        return {
+          ...job.toObject(),
+          totalApplicants,
+        };
+      })
+    );
+
     res.status(200).json({
       totalJobs: jobs.length,
-      jobs,
+      jobs: jobsWithApplicants,
     });
   } catch (error) {
     res.status(500).json({

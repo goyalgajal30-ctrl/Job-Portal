@@ -152,11 +152,24 @@ const getCompanyJobs = async (req, res) => {
       company: company._id,
     }).sort({ createdAt: -1 });
 
+    const jobsWithApplicants = await Promise.all(
+      jobs.map(async (job) => {
+        const totalApplicants = await JobApply.countDocuments({
+          jobId: job._id,
+        });
+
+        return {
+          ...job.toObject(),
+          totalApplicants,
+        };
+      })
+    );
+
     return res.status(200).json({
       success: true,
       message: "Company jobs fetched successfully",
       totalJobs: jobs.length,
-      jobs,
+      jobs: jobsWithApplicants,
     });
   } catch (error) {
     return res.status(500).json({
