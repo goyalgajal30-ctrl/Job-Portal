@@ -185,17 +185,17 @@ function Login() {
                   Login As
                 </label>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, role: "user" })}
-                    className={`rounded-xl border px-4 py-3.5 text-sm font-semibold transition ${
+                    className={`rounded-xl border px-3 py-3 text-xs font-semibold transition ${
                       formData.role === "user"
-                        ? "border-blue-500 bg-blue-600/20 text-blue-300"
+                        ? "border-blue-500 bg-blue-600/20 text-blue-300 shadow-sm"
                         : "border-[#303b65] bg-[#111936] text-gray-400 hover:border-blue-500"
                     }`}
                   >
-                    👤 Job Seeker
+                    👤 Seeker
                   </button>
 
                   <button
@@ -203,13 +203,27 @@ function Login() {
                     onClick={() =>
                       setFormData({ ...formData, role: "company" })
                     }
-                    className={`rounded-xl border px-4 py-3.5 text-sm font-semibold transition ${
+                    className={`rounded-xl border px-3 py-3 text-xs font-semibold transition ${
                       formData.role === "company"
-                        ? "border-blue-500 bg-blue-600/20 text-blue-300"
+                        ? "border-blue-500 bg-blue-600/20 text-blue-300 shadow-sm"
                         : "border-[#303b65] bg-[#111936] text-gray-400 hover:border-blue-500"
                     }`}
                   >
                     🏢 Company
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({ ...formData, role: "admin" })
+                    }
+                    className={`rounded-xl border px-3 py-3 text-xs font-semibold transition ${
+                      formData.role === "admin"
+                        ? "border-violet-500 bg-violet-600/20 text-violet-300 shadow-sm"
+                        : "border-[#303b65] bg-[#111936] text-gray-400 hover:border-violet-500"
+                    }`}
+                  >
+                    👑 Admin
                   </button>
                 </div>
               </div>
