@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ThemeToggle from "./ThemeToggle";
 import { API_BASE } from "./apiConfig";
@@ -87,30 +87,33 @@ function CompanyDashboard() {
           </div>
 
           <nav className="hidden items-center gap-7 text-sm font-semibold text-gray-500 dark:text-gray-400 md:flex">
-            <button className="border-b-2 border-violet-600 py-7 font-bold text-violet-700 dark:text-violet-400">
+            <Link
+              to="/company/dashboard"
+              className="border-b-2 border-violet-600 py-7 font-bold text-violet-700 dark:text-violet-400"
+            >
               Dashboard
-            </button>
+            </Link>
 
-            <button
-              onClick={() => navigate("/company/manage-jobs")}
+            <Link
+              to="/company/manage-jobs"
               className="transition hover:text-violet-600 dark:hover:text-violet-400"
             >
               My Jobs
-            </button>
+            </Link>
 
-            <button
-              onClick={() => navigate("/company/manage-applicants")}
+            <Link
+              to="/company/manage-applicants"
               className="transition hover:text-violet-600 dark:hover:text-violet-400"
             >
               Manage Applicants
-            </button>
+            </Link>
 
-            <button
-              onClick={() => navigate("/company/manage-interviews")}
+            <Link
+              to="/company/manage-interviews"
               className="transition hover:text-violet-600 dark:hover:text-violet-400"
             >
               Interviews
-            </button>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
