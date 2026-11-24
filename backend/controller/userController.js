@@ -288,7 +288,7 @@ const getallusers = async (req, res) => {
 
 const createAdmin = async (req, res) => {
     try {
-        const { name, email, password, phoneNumber, setupKey } = req.body;
+        const { name, email, password, phoneNumber, setupKey } = req.body || {};
 
         if (!process.env.ADMIN_SETUP_KEY) {
             return res.status(500).json({ message: "Admin setup is not configured" });
@@ -304,12 +304,6 @@ const createAdmin = async (req, res) => {
 
         if (password.length < 6) {
             return res.status(400).json({ message: "Password must be at least 6 characters" });
-        }
-
-        const existingAdmin = await userModel.findOne({ role: "admin" });
-
-        if (existingAdmin) {
-            return res.status(400).json({ message: "Admin already exists" });
         }
 
         const normalizedEmail = email.toLowerCase().trim();
@@ -329,13 +323,22 @@ const createAdmin = async (req, res) => {
             role: "admin"
         });
 
+        const token = jwt.sign(
+            { id: admin._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "5d" }
+        );
+
         return res.status(201).json({
+            success: true,
             message: "Admin created successfully",
+            token,
             admin: {
                 id: admin._id,
                 name: admin.name,
                 email: admin.email,
-                role: admin.role
+                role: admin.role,
+                phoneNumber: admin.phoneNumber
             }
         });
 
